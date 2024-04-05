@@ -1,31 +1,50 @@
+[01:32 pm] Niharika Tripathi
 name: Update Apache Homepage
  
 on:
+
   push:
+
     branches:
+
       - main
  
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
  
     steps:
+
       - name: Checkout Repository
+
         uses: actions/checkout@v2
  
       - name: Install SSH Client
+
         run: sudo apt-get install -y openssh-client
  
       - name: Configure SSH
+
         uses: webfactory/ssh-agent@v0.5.3
+
         with:
+
           ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
  
       - name: Update Apache Homepage
+
         run: |
+
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash -s' << 'EOF'
+
             # Update apache homepage
+
             sudo echo "Hello, World!" > /var/www/html/index.html
+
             # Restart Apache
+
             sudo systemctl restart apache2
+
           EOF
